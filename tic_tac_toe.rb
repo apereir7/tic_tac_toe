@@ -9,11 +9,11 @@ module Display
   end
 
   def tictactoe(array)
-    if (array[0]..array[2]).all?('X') || (array[0]..array[2]).all?('0')
+    if array[0] == array[1] && array[1] == array[2]
       true
-    elsif (array[3]..array[5]).all?('X') || (array[3]..array[5]).all?('O')
+    elsif array[3] == array[4] && array[4] == array[5]
       true
-    elsif (array[6]..array[8]).all?('X') || (array[6]..array[8]).all?('O')
+    elsif array[6] == array[7] && array[7] == array[8]
       true
     elsif array[0] == array[3] && array[3] == array[6]
       true
@@ -25,6 +25,8 @@ module Display
       true
     elsif array[2] == array[4] && array[4] == array[6]
       true
+    else
+      false
     end
   end
 end

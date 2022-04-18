@@ -8,26 +8,39 @@ module Display
     array.detect { |num| num == choice }
   end
 
-  def tictactoe(array)
-    if array[0] == array[1] && array[1] == array[2]
-      true
-    elsif array[3] == array[4] && array[4] == array[5]
-      true
-    elsif array[6] == array[7] && array[7] == array[8]
-      true
-    elsif array[0] == array[3] && array[3] == array[6]
-      true
-    elsif array[1] == array[4] && array[4] == array[7]
-      true
-    elsif array[2] == array[5] && array[5] == array[8]
-      true
-    elsif array[0] == array[4] && array[4] == array[8]
-      true
-    elsif array[2] == array[4] && array[4] == array[6]
-      true
-    else
-      false
-    end
+  # check individual row
+  def row_check?(row)
+    row.all?('X') || row.all?('O')
+  end
+
+  # check horizantal row
+
+  def three_in_row?(array1, array2, array3)
+    row_check?(array1) || row_check?(array2) || row_check?(array3)
+  end
+
+  # check vertical columm
+  def three_in_column?(array)
+    row_check?([array[0], array[3], array[6]]) ||
+      row_check?([array[1], array[4], array[7]]) ||
+      row_check?([array[3], array[5], array[8]])
+  end
+  # check diagonals
+
+  def diagonally?(array)
+    diagnal1 = [array[0], array[4], array[8]]
+    diagnal2 = [array[2], array[4], array[6]]
+
+    row_check?(diagnal1) || row_check?(diagnal2)
+  end
+
+  def game?(array)
+    # check the rows
+    three_in_row?(array[0..2], array[3..5], array[6..8]) ||
+      # check the columns
+      three_in_column?(array) ||
+      # check diagnal
+      diagonally?(array)
   end
 end
 
@@ -42,6 +55,8 @@ class Player
     4, 5, 6,
     7, 8, 9
   ]
+
+  
 
   def initialize(pick)
     @pick = pick

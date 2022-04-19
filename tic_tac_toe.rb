@@ -2,12 +2,8 @@
 
 require 'pry-byebug'
 
-# Display grid
+# Display
 module Display
-  def add_cell(array, choice)
-    array.detect { |num| num == choice }
-  end
-
   # check individual row
   def row_check?(row)
     row.all?('X') || row.all?('O')
@@ -42,6 +38,18 @@ module Display
       # check diagnal
       diagonally?(array)
   end
+
+  def grid(array)
+    puts "\n"
+    puts array[0..2].to_s
+    puts array[3..5].to_s
+    puts array[6..8].to_s
+  end
+
+  def change_cell(num, array1, array2)
+    array1[num - 1] = pick
+    array2[num - 1] = pick
+  end
 end
 
 # player
@@ -56,21 +64,22 @@ class Player
     7, 8, 9
   ]
 
-  
+  @@empty = [
+    ' ', ' ', ' ',
+    ' ', ' ', ' ',
+    ' ', ' ', ' '
+  ]
 
   def initialize(pick)
     @pick = pick
   end
 
-  def self.var
-    puts @@matrix
+  def matrix_grid
+    @@matrix
   end
 
-  def self.grid
-    puts "\n"
-    puts @@matrix[0..2].to_s
-    puts @@matrix[3..5].to_s
-    puts @@matrix[6..8].to_s
+  def empty_grid
+    @@empty
   end
 end
 
@@ -79,7 +88,15 @@ first_player = Player.new('X')
 second_player = Player.new('O')
 
 puts "\nFirst player is team #{first_player.pick}"
-
 puts "\nSecond player is team #{second_player.pick}"
+puts "\nEach grid cell is labeled as so for you to choose"
 
-Player.grid
+puts first_player.grid(first_player.matrix_grid)
+
+puts "\nPick an empty cell to begin \n"
+
+puts first_player.grid(first_player.empty_grid)
+
+first_player.change_cell(1, first_player.matrix_grid, first_player.empty_grid)
+
+puts second_player.grid(second_player.empty_grid)

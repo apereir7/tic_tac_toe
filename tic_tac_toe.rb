@@ -4,7 +4,15 @@
 module Display
   # check individual row
   def row_check?(row)
-    row.all?('X') || row.all?('O')
+    if row.all?('X')
+      puts 'Team X wins'
+      true
+    elsif row.all?('O')
+      puts 'Team O wins'
+      true
+    else
+      false
+    end
   end
 
   # check horizantal row
@@ -16,7 +24,7 @@ module Display
   def column?(array)
     row_check?([array[0], array[3], array[6]]) ||
       row_check?([array[1], array[4], array[7]]) ||
-      row_check?([array[3], array[5], array[8]])
+      row_check?([array[2], array[5], array[8]])
   end
   # check diagonals
 
@@ -37,7 +45,7 @@ module Display
       diagonally?(array)
   end
 
-  # aesthetically pleasing display
+  # aesthetically pleasing way to display given array
   def display_grid(array)
     puts "\n"
     puts array[0..2].to_s
@@ -46,37 +54,43 @@ module Display
   end
 
   def change_cell(num, array1, array2)
-    array1[num - 1] = pick
-    array2[num - 1] = pick
+    array1[num.to_i - 1] = pick
+    array2[num.to_i - 1] = pick
   end
 
-  def take_turn(player1, player2)
-    if tictactoe?(player1.matrix_grid)
-      puts "#{player1.pick} wins"
-    elsif  tictactoe?(player2.matrix_grid)
-      puts "#{player2.pick} wins"
+  def player_round(player1, player2)
+    if tictactoe?(player1.matrix_grid) && tictactoe?(player1.empty_grid)
+      puts 'Game Over'
+    elsif tictactoe?(player2.matrix_grid) && tictactoe?(player2.empty_grid)
+      puts 'Game Over'
     else
-      not_three_in_row()
+      not_three_in_row(player1, player2)
     end
   end
 
-  def not_three_in_row()
-    puts "\nPick an empty cell player X\n"
-    num1 = gets.chomp
-    player1.change_cell(num1, player1.matrix_grid, player1.empty_grid)
-    puts "\nPick an empty cell player 0\n"
-    num2 = gets.chomp
-    player2.change_cell(num1, player2.matrix_grid, player2.empty_grid)
+  # If no winner, then player_round() goes to this method
+  def not_three_in_row(player1, player2)
+    puts "\nPick a cell player #{player1.pick}\n"
+    player1.change_cell(gets.chomp, player1.matrix_grid, player1.empty_grid)
+    puts "\n"
+    player1.display_grid(player1.empty_grid)
+    check_score(player1, player2)
   end
 
-  def show_empty_grid
-    puts '[" ", " ", " "]'
-    puts '[" ", " ", " "]'
-    puts '[" ", " ", " "]'
+  # Checks the score after player picks their cell, if winner/full grid, then game over, if not, then back to check_winner method
+  def check_score(player1, player2)
+    if player1.tictactoe?(player1.matrix_grid)
+      puts 'Game over'
+    elsif player1.full_grid?(player1.matrix_grid)
+      puts 'Grid is full. Game over'
+    else
+      player_round(player2, player1)
+    end
   end
 
-  def pick_a_cell
-    puts "\nchoose a cell from 1-9 and then press enter"
+  # Grid was initally all Numeric. If full, all cells will be strings
+  def full_grid?(array)
+    array.all?(String)
   end
 end
 
@@ -86,12 +100,14 @@ class Player
 
   include Display
 
+  # Need class variable to share information
   @@matrix = [
     1, 2, 3,
     4, 5, 6,
     7, 8, 9
   ]
 
+  # Need class variable to share information
   @@empty = [
     ' ', ' ', ' ',
     ' ', ' ', ' ',
@@ -102,10 +118,12 @@ class Player
     @pick = pick
   end
 
+  # Numbered array
   def matrix_grid
     @@matrix
   end
 
+  # Empty array
   def empty_grid
     @@empty
   end
@@ -120,21 +138,14 @@ class Player
     # shows how each cell is labeled
     puts player.display_grid(player.matrix_grid)
     puts "\nPick an empty cell to begin \n"
-    player.show_empty_grid
+    player.display_grid(player.empty_grid)
   end
 end
 
 first_player = Player.new('X')
-second_player = Player.new('0')
+second_player = Player.new('O')
 
 Player.instruction(first_player)
 
-binding.break
-
-first_player.change_cell(gets.chomp.to_i, first_player.matrix_grid, first_player.empty_grid)
-
-#first_player.change_cell(1, first_player.matrix_grid, first_player.empty_grid)
-
-#second_player.display_grid(second_player.empty_grid)
-
+first_player.player_round(first_player, second_player)
 
